@@ -1,9 +1,9 @@
-# d3js-examples
+# D3js examples
 Useful sketches that use d3 library
 
 
 
-##tripartite network chart
+## Tripartite network chart
 Based on the network chart [here](https://d3-graph-gallery.com/graph/network_basic.html).
 
 --
