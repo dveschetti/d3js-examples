@@ -1,0 +1,35 @@
+{
+    "nodes": [
+      {"id": "Reasearch", "group": 1, "step": "Design Phase"},
+      {"id": "Ideate", "group": 1, "step": "Design Phase"},
+      {"id": "Deliver", "group": 1, "step": "Design Phase"},
+      {"id": "Synthesize", "group": 1, "step": "Design Phase"},
+      {"id": "Prototype", "group": 1, "step": "Design Phase"},
+      {"id": "Implement", "group": 1, "step": "Design Phase"},
+      {"id": "Recommend", "group": 2, "step": "Ai Capability"},
+      {"id": "Collect", "group": 2, "step": "Ai Capability"},
+      {"id": "Translate", "group": 2, "step": "Ai Capability"},
+      {"id": "Debug", "group": 2, "step": "Ai Capability"},
+      {"id": "Interface component (input)", "group": 3, "step": "AI Input (From)"},
+      {"id": "Code (input)", "group": 3, "step": "AI Input (From)"},
+      {"id": "Interface component (output)", "group": 4, "step": "AI Output (To)"},
+      {"id": "Code (output)", "group": 4, "step": "AI Output (To)"}
+    ],
+    "links": [
+      {"source": "Reasearch", "target": "Collect"},
+      {"source": "Reasearch", "target": "Translate"},
+      {"source": "Reasearch", "target": "Debug"},
+      {"source": "Ideate", "target": "Translate"},
+      {"source": "Deliver", "target": "Translate"},
+      {"source": "Synthesize", "target": "Recommend"},
+      {"source": "Prototype", "target": "Debug"},
+      {"source": "Implement", "target": "Debug"},
+      {"source": "Recommend", "target": "Interface component (input)"},
+      {"source": "Collect", "target": "Interface component (input)"},
+      {"source": "Translate", "target": "Interface component (input)"},
+      {"source": "Debug", "target": "Code (input)"},
+      {"source": "Interface component (input)", "target": "Interface component (output)"},
+      {"source": "Interface component (input)", "target": "Code (output)"},
+      {"source": "Code (input)", "target": "Code (output)"}
+    ]
+  }
