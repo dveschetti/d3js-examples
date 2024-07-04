@@ -118,7 +118,7 @@ export const zoomableSunburst = (data, {
   path.append('title')
     .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}\n${format(d.value)}`);
 
-  const label_1 = g.append('g')
+  const label = g.append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
     .style('user-select', 'none')
