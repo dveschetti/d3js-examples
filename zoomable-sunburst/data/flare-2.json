@@ -1,0 +1,55 @@
+{
+ "name": "audience",
+ "children": [
+  {
+   "name": "LAC Lugano",
+   "children": [
+    {
+     "name": "Stagione Artistica",
+     "children": [
+      {"name": "Teatro", "value": 25580},
+      {"name": "Danza", "value": 4579},
+      {"name": "Musical", "value": 16812},
+      {"name": "Opera", "value": 4271},
+      {"name": "Musica", "value": 14145}
+     ]
+    },
+    {
+     "name": "LAC edu",
+     "children": [
+      {"name": "OSI LAC edu", "value": 10899},
+      {"name": "MASI LAC edu", "value": 6628},
+      {"name": "LAC edu generale", "value": 11341}
+     ]
+    },
+    {
+     "name": "Eventi privati",
+     "children": [
+      {"name": "Eventi", "value": 24900},
+      {"name": "Altro", "value": 3319}
+     ]
+    }
+   ]
+  },
+  {
+    "name": "Partner Artistici",
+    "children": [
+     {
+      "name": "Arti visive",
+      "children": [
+       {"name": "MASI LAC", "value": 47884},
+       {"name": "Collezione Olgiati", "value": 4613}
+      ]
+     },
+     {
+      "name": "Musica Classica",
+      "children": [
+       {"name": "OSI", "value": 14785},
+       {"name": "LuganoMusica", "value": 12135}
+      ]
+     }
+    ]
+   }
+ 
+ ]
+}
