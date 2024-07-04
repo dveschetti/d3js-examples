@@ -41,7 +41,7 @@ export const zoomableSunburst = (data, {
     .attr('width', width)
     .attr('height', width)
     .attr('viewBox', [0, 0, width, width])
-    .style('font', '15px sans-serif');
+    .style('font', '10px sans-serif');
 
   const g = svg.append('g')
     .attr('transform', `translate(${width / 2},${width / 2})`);
@@ -128,7 +128,7 @@ export const zoomableSunburst = (data, {
     .attr('dy', '0.35em')
     .attr('fill-opacity', d => +labelVisible(d.current))
     .attr('transform', d => labelTransform(d.current))
-    .text(d => d.data.name)
+    .text(d => d.data.name);
 
   const parent = g.append('circle')
     .datum(root)
