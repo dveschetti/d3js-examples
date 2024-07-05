@@ -25,7 +25,8 @@
     {
      "name": "Eventi privati",
      "children": [
-      {"name": "Eventi", "value": 24900}
+      {"name": "Eventi", "value": 24900},
+      {"name": "Eventi artistici", "value": 3319}
      ]
     }
    ]
@@ -44,8 +45,7 @@
       "name": "Musica Classica",
       "children": [
        {"name": "OSI", "value": 14785},
-       {"name": "LuganoMusica", "value": 12135},
-       {"name": "Org. esterni", "value": 3319}
+       {"name": "LuganoMusica", "value": 12135}
       ]
      }
     ]
