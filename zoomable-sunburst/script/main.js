@@ -273,7 +273,7 @@ function createSunburstChart() {
   function labelTransform_2(d) {
     let x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
     let y = ((d.y0 + d.y1) / 2) * radius;
-    return `rotate(${x < 180 ? x -87 : x -93}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    return `rotate(${x < 180 ? x -86 : x -94}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
 
   return svg.node();
