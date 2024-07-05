@@ -16,15 +16,15 @@ function updateSize() {
 
 updateSize()
 window.addEventListener("resize", updateSize);
-export const zoomableSunburst = (data, {
+export let zoomableSunburst = (data, {
   svgId = 'zoomable-sunburst',
   width = window.innerHeight-20,
   radius = width / 6,
   color =  d3.scaleOrdinal(d3.quantize(d3.interpolateHcl("#e52b20", "#bcb4da"), 2)),
   format = d3.format('d')
 } = {}) => {
-  const partition = data => {
-    const root = d3.hierarchy(data)
+  let partition = data => {
+    let root = d3.hierarchy(data)
       .sum(d => d.value)
       .sort((a, b) => b.value - a.value);
     return d3.partition()
@@ -32,20 +32,20 @@ export const zoomableSunburst = (data, {
       (root);
   }
 
-  const root = partition(data);
+  let root = partition(data);
   root.each(d => d.current = d);
 
-  const svg = d3.create('svg')
+  let svg = d3.create('svg')
     .attr('id', svgId)
     .attr('width', width)
     .attr('height', width)
     .attr('viewBox', [0, 0, width, width])
     //.style('font', '10px sans-serif');
 
-  const g = svg.append('g')
+  let g = svg.append('g')
     .attr('transform', `translate(${width / 2},${width / 2})`);
 
-  const arc = d3.arc()
+  let arc = d3.arc()
     .startAngle(d => d.x0)
     .endAngle(d => d.x1)
     .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
@@ -53,20 +53,20 @@ export const zoomableSunburst = (data, {
     .innerRadius(d => d.y0 * radius)
     .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 2));
 
-  const arcVisible = d => d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
-  const labelVisible = d => d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
-  const labelTransform_1 = d => {
-    const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
-    const y = (d.y0 + d.y1) / 2 * radius;
+  let arcVisible = d => d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
+  let labelVisible = d => d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
+  let labelTransform_1 = d => {
+    let x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+    let y = (d.y0 + d.y1) / 2 * radius;
     return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
-  const labelTransform_2 = d => {
-    const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
-    const y = (d.y0 + d.y1) / 2 * radius;
+  let labelTransform_2 = d => {
+    let x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+    let y = (d.y0 + d.y1) / 2 * radius;
     return `rotate(${x < 180 ? x -88 : x -92}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
 
-  const clicked = (event, p) => {
+  let clicked = (event, p) => {
     parent.datum(p.parent || root);
 
     root.each(d => d.target = {
@@ -76,14 +76,14 @@ export const zoomableSunburst = (data, {
       y1: Math.max(0, d.y1 - p.depth)
     });
 
-    const t = g.transition().duration(750);
+    let t = g.transition().duration(750);
 
     // Transition the data on all arcs, even the ones that aren’t visible,
     // so that if this transition is interrupted, entering arcs will start
     // the next transition from the desired position.
     path.transition(t)
       .tween('data', d => {
-        const i = d3.interpolate(d.current, d.target);
+        let i = d3.interpolate(d.current, d.target);
         return t => d.current = i(t);
       })
       .filter(
@@ -110,7 +110,7 @@ export const zoomableSunburst = (data, {
       .attrTween('transform', d => () => labelTransform_2(d.current));
   }
 
-  const path = g.append('g')
+  let path = g.append('g')
     .selectAll('path')
     .data(root.descendants().slice(1))
     .join('path')
@@ -129,7 +129,7 @@ export const zoomableSunburst = (data, {
   path.append('title')
     .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}\n${format(d.value)}`);
 
-  const label_1 = g.append('g')
+  let label_1 = g.append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
     .style('user-select', 'none')
@@ -146,7 +146,7 @@ export const zoomableSunburst = (data, {
     .attr('transform', d => labelTransform_1(d.current))
     .text(d => `${format(d.value)}`);
 
-  const label_2 = g.append('g')
+  let label_2 = g.append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
     .attr('alignment-baseline', 'before-edge')
@@ -163,7 +163,7 @@ export const zoomableSunburst = (data, {
     .attr('transform', d => labelTransform_2(d.current))
     .text(d => d.data.name);
 
-  const parent = g.append('circle')
+  let parent = g.append('circle')
     .datum(root)
     .attr('r', radius)
     .attr('fill', 'none')
