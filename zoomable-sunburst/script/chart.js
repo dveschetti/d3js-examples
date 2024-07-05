@@ -16,13 +16,12 @@ function updateSize() {
 
 updateSize()
 window.addEventListener("resize", updateSize);
-
 export const zoomableSunburst = (data, {
   svgId = 'zoomable-sunburst',
   width = window.innerHeight-20,
   radius = width / 6,
-  color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1)),
-  format = d3.format(',d')
+  color =  d3.scaleOrdinal(d3.quantize(d3.interpolateHcl("#e52b20", "#bcb4da"), 2)),
+  format = d3.format('d')
 } = {}) => {
   const partition = data => {
     const root = d3.hierarchy(data)
@@ -41,7 +40,7 @@ export const zoomableSunburst = (data, {
     .attr('width', width)
     .attr('height', width)
     .attr('viewBox', [0, 0, width, width])
-    .style('font', '10px sans-serif');
+    //.style('font', '10px sans-serif');
 
   const g = svg.append('g')
     .attr('transform', `translate(${width / 2},${width / 2})`);
@@ -50,16 +49,21 @@ export const zoomableSunburst = (data, {
     .startAngle(d => d.x0)
     .endAngle(d => d.x1)
     .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
-    .padRadius(radius * 1.5)
+    .padRadius(radius * 3)
     .innerRadius(d => d.y0 * radius)
-    .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
+    .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 2));
 
   const arcVisible = d => d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
   const labelVisible = d => d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
-  const labelTransform = d => {
+  const labelTransform_1 = d => {
     const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
     const y = (d.y0 + d.y1) / 2 * radius;
     return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+  }
+  const labelTransform_2 = d => {
+    const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+    const y = (d.y0 + d.y1) / 2 * radius;
+    return `rotate(${x < 180 ? x -88 : x -92}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
 
   const clicked = (event, p) => {
@@ -86,7 +90,7 @@ export const zoomableSunburst = (data, {
         function(d) {
           return +this.getAttribute('fill-opacity') || arcVisible(d.target);
         })
-      .attr('fill-opacity', d => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+      .attr('fill-opacity', d => arcVisible(d.target) ? (d.children ? 1 : 0.7) : 0)
       .attr('pointer-events', d => arcVisible(d.target) ? 'auto' : 'none')
 
       .attrTween('d', d => () => arc(d.current));
@@ -96,7 +100,14 @@ export const zoomableSunburst = (data, {
           return +this.getAttribute('fill-opacity') || labelVisible(d.target);
         }).transition(t)
       .attr('fill-opacity', d => +labelVisible(d.target))
-      .attrTween('transform', d => () => labelTransform(d.current));
+      .attrTween('transform', d => () => labelTransform_1(d.current));
+
+      label_2.filter(
+        function(d) {
+          return +this.getAttribute('fill-opacity') || labelVisible(d.target);
+        }).transition(t)
+      .attr('fill-opacity', d => +labelVisible(d.target))
+      .attrTween('transform', d => () => labelTransform_2(d.current));
   }
 
   const path = g.append('g')
@@ -107,7 +118,7 @@ export const zoomableSunburst = (data, {
       while (d.depth > 1) d = d.parent;
       return color(d.data.name);
     })
-    .attr('fill-opacity', d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
+    .attr('fill-opacity', d => arcVisible(d.current) ? (d.children ? 1 : 0.7) : 0)
     .attr('pointer-events', d => arcVisible(d.current) ? 'auto' : 'none')
     .attr('d', d => arc(d.current));
 
@@ -118,16 +129,38 @@ export const zoomableSunburst = (data, {
   path.append('title')
     .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}\n${format(d.value)}`);
 
-  const label = g.append('g')
+  const label_1 = g.append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
     .style('user-select', 'none')
     .selectAll('text')
     .data(root.descendants().slice(1))
     .join('text')
+    .style("font-size", "20px")
+    .style("font-family", "Arial")
+    .attr('alignment-baseline', 'after-edge')
+    .style("font-weight", "Bold")
+    .style('fill', 'rgb(255,255,255)')
     .attr('dy', '0.35em')
     .attr('fill-opacity', d => +labelVisible(d.current))
-    .attr('transform', d => labelTransform(d.current))
+    .attr('transform', d => labelTransform_1(d.current))
+    .text(d => `${format(d.value)}`);
+
+  const label_2 = g.append('g')
+    .attr('pointer-events', 'none')
+    .attr('text-anchor', 'middle')
+    .attr('alignment-baseline', 'before-edge')
+    .style('user-select', 'none')
+    .selectAll('text')
+    .data(root.descendants().slice(1))
+    .join('text')
+    .style("font-size", "10px")
+    .style("font-family", "Arial")
+    .style("font-weight", "Bold")
+    .style('fill', 'rgb(255,255,255)')
+    .attr('dy', '0.35em')
+    .attr('fill-opacity', d => +labelVisible(d.current))
+    .attr('transform', d => labelTransform_2(d.current))
     .text(d => d.data.name);
 
   const parent = g.append('circle')
