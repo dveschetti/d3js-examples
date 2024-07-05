@@ -147,6 +147,7 @@ export let zoomableSunburst = (data, {
     .attr('transform', d => labelTransform_1(d.current))
     .text(d => `${format(d.value)}`);
 
+
   let label_2 = g.append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
