@@ -21,7 +21,7 @@ export let zoomableSunburst = (data, {
   width = window.innerHeight-20,
   radius = width / 6,
   color =  d3.scaleOrdinal(d3.quantize(d3.interpolateHcl("#e52b20", "#bcb4da"), 2)),
-  format = d3.format('d')
+  format = d3.format(',d')
 } = {}) => {
   let partition = data => {
     let root = d3.hierarchy(data)
@@ -41,6 +41,7 @@ export let zoomableSunburst = (data, {
     .attr('height', width)
     .attr('viewBox', [0, 0, width, width])
     //.style('font', '10px sans-serif');
+
 
   let g = svg.append('g')
     .attr('transform', `translate(${width / 2},${width / 2})`);
