@@ -158,65 +158,43 @@ function createSunburstChart() {
   function clicked(event, p) {
     parent.datum(p.parent || root);
 
-    root.each(
-      (d) =>
-        (d.target = {
-          x0:
-            Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) *
-            2 *
-            Math.PI,
-          x1:
-            Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) *
-            2 *
-            Math.PI,
-          y0: Math.max(0, d.y0 - p.depth),
-          y1: Math.max(0, d.y1 - p.depth),
+    root.each(d => {
+        d.target = {
+            x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+            x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+            y0: Math.max(0, d.y0 - p.depth),
+            y1: Math.max(0, d.y1 - p.depth),
+        };
+    });
+
+    const t = svg.transition().duration(750);
+
+    path.transition(t)
+        .tween('data', d => {
+            const i = d3.interpolate(d.current, d.target);
+            return t => d.current = i(t);
         })
-    );
+        .filter(function(d) {
+            return +this.getAttribute('fill-opacity') || arcVisible(d.target);
+        })
+        .attr('fill-opacity', d => arcVisible(d.target) ? (d.children ? 0.9 : 0.7) : 0)
+        .attr('pointer-events', d => arcVisible(d.target) ? 'auto' : 'none')
+        .attrTween('d', d => () => arc(d.current));
 
-    let t = svg.transition().duration(750);
+    label_1.transition(t)
+        .attr('fill-opacity', d => +labelVisible(d.target))
+        .attrTween('transform', d => () => labelTransform_1(d.current));
 
-    // Transition the data on all arcs, even the ones that aren’t visible,
-    // so that if this transition is interrupted, entering arcs will start
-    // the next transition from the desired position.
-    path
-      .transition(t)
-      .tween('data', (d) => {
-        let i = d3.interpolate(d.current, d.target);
-        return (t) => (d.current = i(t));
-      })
-      .filter(function (d) {
-        return +this.getAttribute('fill-opacity') || arcVisible(d.target);
-      })
-      .attr('fill-opacity', (d) =>
-        arcVisible(d.target) ? (d.children ? 0.9 : 0.7) : 0
-      )
-      .attr('pointer-events', (d) => (arcVisible(d.target) ? 'auto' : 'none'))
-
-      .attrTween('d', (d) => () => arc(d.current));
-
-    label_1
-      .filter(function (d) {
-        return +this.getAttribute('fill-opacity') || labelVisible(d.target);
-      })
-      .transition(t)
-      .attr('fill-opacity', (d) => +labelVisible(d.target))
-      .attrTween('transform', (d) => () => labelTransform_1(d.current));
-    
-    label_2
-      .filter(function (d) {
-        return +this.getAttribute('fill-opacity') || labelVisible(d.target);
-      })
-      .transition(t)
-      .attr('fill-opacity', (d) => +labelVisible(d.target))
-      .attrTween('transform', (d) => () => labelTransform_2(d.current));
+    label_2.transition(t)
+        .attr('fill-opacity', d => +labelVisible(d.target))
+        .attrTween('transform', d => () => labelTransform_2(d.current));
 
     if (p === root) {
-      hideBack();
+        hideBack();
     } else {
-      showBack();
+        showBack();
     }
-  }
+}
 
   function hideBack() {
     parent
@@ -267,13 +245,21 @@ function createSunburstChart() {
   function labelTransform_1(d) {
     let x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
     let y = ((d.y0 + d.y1) / 2) * radius;
-    return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    if (d.depth > 1) { // Applicare una rotazione diversa per gli spicchi esterni
+      return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    } else { // Rotazione standard per gli spicchi interni
+      return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    }
   }
 
   function labelTransform_2(d) {
     let x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
     let y = ((d.y0 + d.y1) / 2) * radius;
-    return `rotate(${x < 180 ? x -86 : x -94}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    if (d.depth > 1) { // Applicare una rotazione diversa per gli spicchi esterni
+      return `rotate(${x < 180 ? x - 88 : x - 92}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    } else { // Rotazione standard per gli spicchi interni
+      return `rotate(${x < 180 ? x - 87 : x - 93}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    }
   }
 
   return svg.node();
